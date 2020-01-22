@@ -179,6 +179,10 @@ class CropLayout @JvmOverloads constructor(
     )
   }
 
+  fun getCropRect(): RectF? {
+    return frameCache
+  }
+
   /**
    * Crop the image and returns the result via [OnCropListener].
    *
