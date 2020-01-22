@@ -46,6 +46,8 @@ class CropLayout @JvmOverloads constructor(
 
     val percentWidth: Float
     val percentHeight: Float
+    val ratioWidth: Int
+    val ratioHeight: Int
     val scale: Float
 
     try {
@@ -94,6 +96,10 @@ class CropLayout @JvmOverloads constructor(
           DEFAULT_PBASE,
           DEFAULT_PERCENT_HEIGHT
       )
+
+      ratioHeight = a.getInt(R.styleable.CropLayout_cropme_frame_ratio_height, -1)
+      ratioWidth = a.getInt(R.styleable.CropLayout_cropme_frame_ratio_width, -1)
+
     } finally {
       a.recycle()
     }
@@ -106,7 +112,12 @@ class CropLayout @JvmOverloads constructor(
         val totalWidth = measuredWidth.toFloat()
         val totalHeight = measuredHeight.toFloat()
         val frameWidth = measuredWidth * percentWidth
-        val frameHeight = measuredHeight * percentHeight
+        var frameHeight = measuredHeight * percentHeight
+
+        if(ratioHeight > 0 && ratioWidth > 0) {
+          frameHeight = (frameWidth.toDouble() / (ratioWidth.toDouble() / ratioHeight.toDouble())).toFloat()
+        }
+
         val frame = RectF(
             (totalWidth - frameWidth) / 2f,
             (totalHeight - frameHeight) / 2f,

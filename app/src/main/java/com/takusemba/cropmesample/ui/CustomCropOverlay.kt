@@ -2,11 +2,14 @@ package com.takusemba.cropmesample.ui
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES
 import android.util.AttributeSet
+import androidx.core.content.ContextCompat
 import com.takusemba.cropme.CropOverlay
+import com.takusemba.cropmesample.R
 
 /**
  * Custom overlay which has a rounded rectangle frame.
@@ -21,58 +24,49 @@ class CustomCropOverlay @JvmOverloads constructor(
     cropOverlayAttrs: AttributeSet? = attrs
 ) : CropOverlay(context, attrs, defStyleAttr, cropOverlayAttrs) {
 
-  override fun drawCrop(canvas: Canvas, paint: Paint) {
-    val frameRect = frame ?: return
-    val frameWidth = frameRect.width()
-    val frameHeight = frameRect.height()
 
-    val left = (width - frameWidth) / 2f
-    val top = (height - frameHeight) / 2f
-    val right = (width + frameWidth) / 2f
-    val bottom = (height + frameHeight) / 2f
-
-    if (VERSION_CODES.LOLLIPOP < SDK_INT) {
-      canvas.drawRoundRect(left, top, right, bottom, ROUND, ROUND, paint)
-    } else {
-      canvas.drawRect(left, top, right, bottom, paint)
-    }
+  override fun drawBackground(canvas: Canvas, paint: Paint) {
+    // No Background
   }
 
   override fun drawBorder(canvas: Canvas, paint: Paint) {
     val frameRect = frame ?: return
-    val frameWidth = frameRect.width()
-    val frameHeight = frameRect.height()
+    paint.color = ContextCompat.getColor(context, R.color.white)
+    canvas.drawRect(frameRect, paint)
 
-    val left = (width - frameWidth) / 2f
-    val top = (height - frameHeight) / 2f
-    val right = (width + frameWidth) / 2f
-    val bottom = (height + frameHeight) / 2f
-
-    if (VERSION_CODES.LOLLIPOP < SDK_INT) {
-      val borderHeight = frameHeight / 3
-      canvas.drawLine(left, top + borderHeight, right, top + borderHeight, paint)
-      canvas.drawLine(left, top + borderHeight * 2, right, top + borderHeight * 2, paint)
-
-      val borderWidth = frameWidth / 3
-      canvas.drawLine(left + borderWidth, top, left + borderWidth, bottom, paint)
-      canvas.drawLine(left + borderWidth * 2, top, left + borderWidth * 2, bottom, paint)
-
-      canvas.drawRoundRect(left, top, right, bottom, ROUND, ROUND, paint)
-    } else {
-      val borderHeight = frameHeight / 3
-      canvas.drawLine(left, top + borderHeight, right, top + borderHeight, paint)
-      canvas.drawLine(left, top + borderHeight * 2, right, top + borderHeight * 2, paint)
-
-      val borderWidth = frameWidth / 3
-      canvas.drawLine(left + borderWidth, top, left + borderWidth, bottom, paint)
-      canvas.drawLine(left + borderWidth * 2, top, left + borderWidth * 2, bottom, paint)
-
-      canvas.drawRect(left, top, right, bottom, paint)
-    }
+    drawFaceOval(canvas)
+    drawBlurredOverlay(canvas)
   }
 
-  companion object {
+  override fun drawCrop(canvas: Canvas, paint: Paint) {
+    // Nothing
+  }
 
-    private const val ROUND: Float = 25f
+  private fun drawFaceOval(canvas: Canvas) {
+    val frameRect = frame ?: return
+    val cropPaddingTop = (frameRect.height() * 0.1).toFloat()
+    val cropPaddingSide = (frameRect.width() * 0.2).toFloat()
+    val cropPaddingBottom = (frameRect.height() * 0.25).toFloat()
+
+    val ovalPaint = Paint().apply {
+      strokeWidth = 7f
+      style = Paint.Style.STROKE
+      color = ContextCompat.getColor(context, R.color.white)
+      pathEffect = DashPathEffect(floatArrayOf(40f, 40f), 80f)
+    }
+    canvas.drawOval(frameRect.left + cropPaddingSide, frameRect.top + cropPaddingTop, frameRect.right - cropPaddingSide, frameRect.bottom - cropPaddingBottom, ovalPaint)
+  }
+
+  private fun drawBlurredOverlay(canvas: Canvas) {
+    val overlayPaint = Paint().apply {
+      color = ContextCompat.getColor(context, R.color.overlay)
+    }
+
+    val frameRect = frame ?: return
+
+    canvas.drawRect(0f, 0f, measuredWidth.toFloat(), frameRect.top, overlayPaint)
+    canvas.drawRect(0f, frameRect.top, frameRect.left, measuredHeight.toFloat(), overlayPaint)
+    canvas.drawRect(frameRect.left, frameRect.bottom, measuredWidth.toFloat(), measuredHeight.toFloat(), overlayPaint)
+    canvas.drawRect(frameRect.right, frameRect.top, measuredWidth.toFloat(), frameRect.bottom, overlayPaint)
   }
 }

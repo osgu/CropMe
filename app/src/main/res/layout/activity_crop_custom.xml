@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:id="@+id/container"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  >
+  android:layout_height="match_parent">
 
   <include layout="@layout/merge_crop_toolbar" />
 
   <com.takusemba.cropme.CropLayout
     android:id="@+id/crop_view"
-    android:layout_width="match_parent"
     android:layout_height="0dp"
+    android:layout_width="0dp"
+    app:cropme_max_scale="10.0"
     app:cropme_custom_shape_layout="@layout/custom_overlay"
-    app:cropme_frame_height_percent="80%"
     app:cropme_frame_width_percent="80%"
-    app:cropme_max_scale="3.0"
+    app:cropme_frame_height_percent="80%"
+    app:cropme_frame_ratio_height="4"
+    app:cropme_frame_ratio_width="3"
     app:cropme_overlay_shape="custom"
-    app:layout_constraintDimensionRatio="h,1:1"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintTop_toBottomOf="@id/toolbar"
-    >
-
-  </com.takusemba.cropme.CropLayout>
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
 
   <include layout="@layout/merge_crop_recycler_view" />
-
   <include layout="@layout/merge_crop_progress" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
