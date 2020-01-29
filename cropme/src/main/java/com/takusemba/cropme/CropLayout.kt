@@ -40,6 +40,7 @@ class CropLayout @JvmOverloads constructor(
   private var frameCache: RectF? = null
 
   private val listeners = CopyOnWriteArrayList<OnCropListener>()
+  private var mCropRectListener: OnRectDrawListener? = null
 
   init {
     val a = context.obtainStyledAttributes(attrs, R.styleable.CropLayout, 0, 0)
@@ -130,6 +131,7 @@ class CropLayout @JvmOverloads constructor(
         cropOverlay.setFrame(frame)
         cropOverlay.requestLayout()
         frameCache = frame
+        mCropRectListener?.onRectDrawn(frame)
 
         val animator = GestureAnimator.of(cropImageView, frame, scale)
         val animation = GestureAnimation(cropOverlay, animator)
@@ -181,6 +183,10 @@ class CropLayout @JvmOverloads constructor(
 
   fun getCropRect(): RectF? {
     return frameCache
+  }
+
+  fun setOnCropRectDrawnListener(listener: OnRectDrawListener) {
+    mCropRectListener = listener
   }
 
   /**
