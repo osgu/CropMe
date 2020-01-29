@@ -5,8 +5,8 @@ buildscript {
       groupId: "com.github.takusemba",
       artifactId: "cropme",
 
-      libraryVersionCode: 17,
-      libraryVersionName: "2.0.8",
+      libraryVersionCode: 18,
+      libraryVersionName: "2.0.9",
 
       compileSdkVersion: 28,
       minSdkVersion: 21,
